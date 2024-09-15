@@ -1,38 +1,41 @@
 import 'package:flutter/material.dart';
-import 'package:kn_pos/profile/main.dart';
 
 class Footer extends StatelessWidget {
-  const Footer({super.key});
+  final Function(int pages) onNavigate;
+
+  const Footer({super.key, required this.onNavigate});
 
   @override
   Widget build(BuildContext context) {
-    return Row(children: [
-      IconButton(
-          onPressed: () {
-            print("Dashboard");
-          },
-          icon: const Icon(Icons.dashboard)),
-      IconButton(
-          onPressed: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const Profile()));
-          },
-          icon: const Icon(Icons.dashboard)),
-      IconButton(
-          onPressed: () {
-            print("Dashboard");
-          },
-          icon: const Icon(Icons.dashboard)),
-      IconButton(
-          onPressed: () {
-            print("Dashboard");
-          },
-          icon: const Icon(Icons.dashboard)),
-      IconButton(
-          onPressed: () {
-            print("Dashboard");
-          },
-          icon: const Icon(Icons.dashboard))
-    ]);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        IconButton(
+            onPressed: () {
+              onNavigate(0);
+            },
+            icon: const Icon(Icons.dashboard)),
+        IconButton(
+            onPressed: () {
+              onNavigate(1);
+            },
+            icon: const Icon(Icons.warehouse)),
+        IconButton(
+            onPressed: () {
+              onNavigate(2);
+            },
+            icon: const Icon(Icons.shopping_cart_outlined)),
+        IconButton(
+            onPressed: () {
+              onNavigate(3);
+            },
+            icon: const Icon(Icons.line_axis)),
+        IconButton(
+            onPressed: () {
+              onNavigate(4);
+            },
+            icon: const Icon(Icons.person))
+      ],
+    );
   }
 }

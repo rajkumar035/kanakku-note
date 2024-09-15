@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kn_pos/dashboard/main.dart';
+import 'package:kn_pos/main/main.dart';
 
 class Login extends StatelessWidget {
   const Login({super.key});
@@ -100,7 +100,7 @@ class Login extends StatelessWidget {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const Dashboard()));
+                          builder: (context) => const MainPage()));
                 },
                 child: const Text(
                   "Sign In",

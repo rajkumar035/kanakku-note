@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:kn_pos/footer/main.dart';
 
 class Profile extends StatelessWidget {
   const Profile({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Column(
-        children: [Text("Profile")],
-      ),
-      bottomNavigationBar: Footer(),
+    return Scaffold(
+      body: LayoutBuilder(builder: (context, constraints) {
+        return const Column(
+          children: [Text("Profile")],
+        );
+      }),
     );
   }
 }
