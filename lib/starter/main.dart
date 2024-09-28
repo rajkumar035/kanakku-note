@@ -24,7 +24,7 @@ class Starter extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(top: 100, bottom: 60),
                       child: Image.asset(
-                        "assets/logo.png",
+                        "assets/images/logo.png",
                         height: 140,
                         fit: BoxFit.cover,
                       ),

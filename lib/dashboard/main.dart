@@ -41,7 +41,7 @@ class Dashboard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Image.asset(
-                    "assets/logo.png",
+                    "assets/images/logo.png",
                     fit: BoxFit.cover,
                     height: 50,
                   ),
@@ -374,239 +374,242 @@ class Dashboard extends StatelessWidget {
                     ],
                   ),
                 ),
-                Container(
-                  padding: const EdgeInsets.only(
-                      left: 20, right: 20, top: 40, bottom: 40),
-                  decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
-                      color: Color.fromRGBO(240, 240, 240, 1)),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Transaction History",
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w700),
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.refresh,
-                                size: 12,
-                                color: Color.fromRGBO(0, 0, 0, 1),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(left: 10),
-                                child: Icon(
-                                  Icons.toggle_off,
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: Container(
+                    padding: const EdgeInsets.only(
+                        left: 20, right: 20, top: 40, bottom: 40),
+                    decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        color: Color.fromRGBO(240, 240, 240, 1)),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Transaction History",
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w700),
+                            ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.refresh,
                                   size: 12,
                                   color: Color.fromRGBO(0, 0, 0, 1),
                                 ),
-                              )
-                            ],
-                          )
-                        ],
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 20),
-                        child: Text(
-                          "Today",
-                          style: TextStyle(
-                              fontSize: 10, fontWeight: FontWeight.w600),
+                                Padding(
+                                  padding: EdgeInsets.only(left: 10),
+                                  child: Icon(
+                                    Icons.toggle_off,
+                                    size: 12,
+                                    color: Color.fromRGBO(0, 0, 0, 1),
+                                  ),
+                                )
+                              ],
+                            )
+                          ],
                         ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: const BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(50)),
-                                    color: Color.fromARGB(255, 88, 86, 214)),
-                                child: const Icon(
-                                  Icons.payment,
-                                  size: 18,
-                                  color: Color.fromRGBO(255, 255, 255, 1),
-                                ),
-                              ),
-                              const Padding(
-                                padding: EdgeInsets.only(left: 14),
-                                child: Text(
-                                  "Sales Cash In",
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                              )
-                            ],
-                          ),
-                          const Text(
-                            "+ \$800.98",
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 20),
+                          child: Text(
+                            "Today",
                             style: TextStyle(
-                                fontSize: 14, fontWeight: FontWeight.w600),
-                          )
-                        ],
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.only(top: 10, bottom: 10),
-                        child: SizedBox(
-                          width: double.infinity,
-                          height: 1,
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                                color: Color.fromRGBO(223, 223, 223, 1)),
+                                fontSize: 10, fontWeight: FontWeight.w600),
                           ),
                         ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: const BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(50)),
-                                    color: Color.fromARGB(255, 88, 86, 214)),
-                                child: const Icon(
-                                  Icons.currency_rupee,
-                                  size: 18,
-                                  color: Color.fromRGBO(255, 255, 255, 1),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: const BoxDecoration(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(50)),
+                                      color: Color.fromARGB(255, 88, 86, 214)),
+                                  child: const Icon(
+                                    Icons.payment,
+                                    size: 18,
+                                    color: Color.fromRGBO(255, 255, 255, 1),
+                                  ),
                                 ),
-                              ),
-                              const Padding(
-                                padding: EdgeInsets.only(left: 14),
-                                child: Text(
-                                  "Sales Receivables",
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                              )
-                            ],
-                          ),
-                          const Text(
-                            "+ \$800.98",
-                            style: TextStyle(
-                                fontSize: 14, fontWeight: FontWeight.w600),
-                          )
-                        ],
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.only(top: 10, bottom: 10),
-                        child: SizedBox(
-                          width: double.infinity,
-                          height: 1,
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                                color: Color.fromRGBO(223, 223, 223, 1)),
+                                const Padding(
+                                  padding: EdgeInsets.only(left: 14),
+                                  child: Text(
+                                    "Sales Cash In",
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                )
+                              ],
+                            ),
+                            const Text(
+                              "+ \$800.98",
+                              style: TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.w600),
+                            )
+                          ],
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.only(top: 10, bottom: 10),
+                          child: SizedBox(
+                            width: double.infinity,
+                            height: 1,
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                  color: Color.fromRGBO(223, 223, 223, 1)),
+                            ),
                           ),
                         ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: const BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(50)),
-                                    color: Color.fromARGB(255, 88, 86, 214)),
-                                child: const Icon(
-                                  Icons.storage,
-                                  size: 18,
-                                  color: Color.fromRGBO(255, 255, 255, 1),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: const BoxDecoration(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(50)),
+                                      color: Color.fromARGB(255, 88, 86, 214)),
+                                  child: const Icon(
+                                    Icons.currency_rupee,
+                                    size: 18,
+                                    color: Color.fromRGBO(255, 255, 255, 1),
+                                  ),
                                 ),
-                              ),
-                              const Padding(
-                                padding: EdgeInsets.only(left: 14),
-                                child: Text(
-                                  "Purchase Payables",
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                              )
-                            ],
-                          ),
-                          const Text(
-                            "+ \$800.98",
-                            style: TextStyle(
-                                fontSize: 14, fontWeight: FontWeight.w600),
-                          )
-                        ],
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.only(top: 10, bottom: 10),
-                        child: SizedBox(
-                          width: double.infinity,
-                          height: 1,
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                                color: Color.fromRGBO(223, 223, 223, 1)),
+                                const Padding(
+                                  padding: EdgeInsets.only(left: 14),
+                                  child: Text(
+                                    "Sales Receivables",
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                )
+                              ],
+                            ),
+                            const Text(
+                              "+ \$800.98",
+                              style: TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.w600),
+                            )
+                          ],
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.only(top: 10, bottom: 10),
+                          child: SizedBox(
+                            width: double.infinity,
+                            height: 1,
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                  color: Color.fromRGBO(223, 223, 223, 1)),
+                            ),
                           ),
                         ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: const BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(50)),
-                                    color: Color.fromARGB(255, 88, 86, 214)),
-                                child: const Icon(
-                                  Icons.storage,
-                                  size: 18,
-                                  color: Color.fromRGBO(255, 255, 255, 1),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: const BoxDecoration(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(50)),
+                                      color: Color.fromARGB(255, 88, 86, 214)),
+                                  child: const Icon(
+                                    Icons.storage,
+                                    size: 18,
+                                    color: Color.fromRGBO(255, 255, 255, 1),
+                                  ),
                                 ),
-                              ),
-                              const Padding(
-                                padding: EdgeInsets.only(left: 14),
-                                child: Text(
-                                  "Expense Payout",
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                              )
-                            ],
+                                const Padding(
+                                  padding: EdgeInsets.only(left: 14),
+                                  child: Text(
+                                    "Purchase Payables",
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                )
+                              ],
+                            ),
+                            const Text(
+                              "+ \$800.98",
+                              style: TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.w600),
+                            )
+                          ],
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.only(top: 10, bottom: 10),
+                          child: SizedBox(
+                            width: double.infinity,
+                            height: 1,
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                  color: Color.fromRGBO(223, 223, 223, 1)),
+                            ),
                           ),
-                          const Text(
-                            "+ \$800.98",
-                            style: TextStyle(
-                                fontSize: 14, fontWeight: FontWeight.w600),
-                          )
-                        ],
-                      ),
-                    ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: const BoxDecoration(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(50)),
+                                      color: Color.fromARGB(255, 88, 86, 214)),
+                                  child: const Icon(
+                                    Icons.storage,
+                                    size: 18,
+                                    color: Color.fromRGBO(255, 255, 255, 1),
+                                  ),
+                                ),
+                                const Padding(
+                                  padding: EdgeInsets.only(left: 14),
+                                  child: Text(
+                                    "Expense Payout",
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                )
+                              ],
+                            ),
+                            const Text(
+                              "+ \$800.98",
+                              style: TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.w600),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 )
               ],

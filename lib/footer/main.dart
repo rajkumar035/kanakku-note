@@ -24,7 +24,7 @@ class Footer extends StatelessWidget {
             onPressed: () {
               onNavigate(2);
             },
-            icon: const Icon(Icons.shopping_cart_outlined)),
+            icon: const Icon(Icons.shopping_cart_checkout)),
         IconButton(
             onPressed: () {
               onNavigate(3);

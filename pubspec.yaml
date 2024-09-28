@@ -57,7 +57,13 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
-  assets: [assets/logo.png, assets/sample.jpg]
+  
+  assets: [assets/images/logo.png, assets/images/sample.jpg]
+
+  fonts:
+    - family: Poppins # Font family name
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
 
   # To add assets to your application, add an assets section, like this:
   # assets:

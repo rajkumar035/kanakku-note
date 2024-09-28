@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:kn_pos/analytics/main.dart';
-import 'package:kn_pos/cart/main.dart';
 import 'package:kn_pos/dashboard/main.dart';
 import 'package:kn_pos/footer/main.dart';
 import 'package:kn_pos/profile/main.dart';
+import 'package:kn_pos/sales/main.dart';
 import 'package:kn_pos/warehouse/main.dart';
 
 class MainPage extends StatefulWidget {
@@ -26,7 +26,7 @@ class _MainPageState extends State<MainPage> {
   final List<Widget> pages = [
     const Dashboard(),
     const Warehouse(),
-    const Cart(),
+    const Sales(),
     const Analytics(),
     const Profile(),
   ];

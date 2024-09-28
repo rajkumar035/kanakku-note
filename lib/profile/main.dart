@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kn_pos/starter/main.dart';
 
 class Profile extends StatelessWidget {
   const Profile({super.key});
@@ -60,7 +61,7 @@ class Profile extends StatelessWidget {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(50),
                           child: Image.asset(
-                            "assets/sample.jpg",
+                            "assets/images/sample.jpg",
                             height: 70,
                             width: 70,
                             fit: BoxFit.cover,
@@ -285,6 +286,10 @@ class Profile extends StatelessWidget {
                       backgroundColor: WidgetStatePropertyAll(
                           Color.fromRGBO(61, 101, 124, 1))),
                   onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const Starter()));
                     print("logout");
                   },
                   child: const Text(

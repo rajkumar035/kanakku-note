@@ -16,7 +16,8 @@ class Login extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Image.asset("assets/logo.png", height: 140, fit: BoxFit.cover),
+            Image.asset("assets/images/logo.png",
+                height: 140, fit: BoxFit.cover),
             const Padding(
               padding: EdgeInsets.only(bottom: 10, top: 30),
               child: Text(
