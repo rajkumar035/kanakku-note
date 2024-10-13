@@ -1,8 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:kn_pos/main/main.dart';
+import 'package:kn_pos/server/db.dart';
 
-class Login extends StatelessWidget {
-  const Login({super.key});
+// ignore: must_be_immutable
+class _MyLogin extends State<Login> {
+  final DatabaseServices _databaseServices = DatabaseServices.instance;
+  // ignore: prefer_typing_uninitialized_variables
+  var storename = "";
+
+  @override
+  void initState() {
+    super.initState();
+    getUserData();
+  }
+
+  void getUserData() async {
+    var data = await _databaseServices.getData(_databaseServices.storeDataList);
+    setState(() {
+      storename = data[0]["tenant"];
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -247,22 +264,22 @@ class Login extends StatelessWidget {
                 ),
               ],
             ),
-            const Padding(
-              padding: EdgeInsets.only(top: 60),
+            Padding(
+              padding: const EdgeInsets.only(top: 60),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.store,
                     color: Color.fromARGB(255, 0, 0, 0),
                     size: 50,
                   ),
                   Padding(
-                    padding: EdgeInsets.only(left: 20),
+                    padding: const EdgeInsets.only(left: 20),
                     child: Text(
-                      "ABC Stores Ltd",
-                      style: TextStyle(
+                      storename,
+                      style: const TextStyle(
                           color: Color.fromARGB(255, 0, 0, 0),
                           fontSize: 24,
                           fontWeight: FontWeight.w700),
@@ -276,4 +293,12 @@ class Login extends StatelessWidget {
       )),
     ));
   }
+}
+
+class Login extends StatefulWidget {
+  const Login({super.key});
+
+  @override
+  // ignore: library_private_types_in_public_api
+  _MyLogin createState() => _MyLogin();
 }

@@ -289,7 +289,7 @@ class Profile extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const Starter()));
+                            builder: (context) => const MyStarter()));
                     print("logout");
                   },
                   child: const Text(

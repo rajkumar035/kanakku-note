@@ -10,6 +10,7 @@ class HomeApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: Starter());
+    return MaterialApp(
+        theme: ThemeData(fontFamily: "Poppins"), home: const MyStarter());
   }
 }

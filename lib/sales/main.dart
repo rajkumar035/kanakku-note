@@ -1,70 +1,143 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:kn_pos/paymentInfo/main.dart';
+import 'package:kn_pos/server/db.dart';
 
 class ProductList {
   final int quantity;
   final String name;
   final String id;
-  final String price;
+  final String amount;
   final String? discount;
-  final String originalPrice;
+  final String grossAmount;
 
   ProductList(
       {required this.quantity,
       required this.name,
       required this.id,
-      required this.price,
-      required this.originalPrice,
+      required this.amount,
+      required this.grossAmount,
       this.discount});
+
+  Map<String, dynamic> toMap() {
+    return {
+      'quantity': quantity,
+      'name': name,
+      'id': id,
+      'amount': amount,
+      'discount': discount,
+      'grossAmount': grossAmount,
+    };
+  }
 }
 
 class _MainSales extends State<Sales> {
+  final DatabaseServices _databaseServices = DatabaseServices.instance;
+  final _productForm = GlobalKey<FormState>();
+  final _productNameController = TextEditingController();
+  final _productQuanityController = TextEditingController();
+
   List<ProductList> productlist = [
     ProductList(
         quantity: 2,
         name: "Shampoo",
         id: "R4T455Y",
-        price: "200",
-        originalPrice: "200"),
+        amount: "200",
+        grossAmount: "200"),
     ProductList(
         quantity: 2,
         name: "Washing liquid",
         id: "4T89U4T",
-        price: "40",
+        amount: "40",
         discount: "60",
-        originalPrice: "100"),
+        grossAmount: "100"),
     ProductList(
         quantity: 5,
         name: "Oats",
         id: "0IU384UR",
-        price: "300",
-        originalPrice: "300"),
+        amount: "300",
+        grossAmount: "300"),
     ProductList(
         quantity: 1,
         name: "Dates",
         id: "1E32E23R",
-        price: "500",
-        originalPrice: "500"),
+        amount: "500",
+        grossAmount: "500"),
     ProductList(
         quantity: 6,
         name: "Soap",
         id: "KNSJDFY7",
-        price: "50",
-        originalPrice: "50"),
+        amount: "50",
+        grossAmount: "50"),
   ];
+  List<ProductList> cartProductList = [];
+  ProductList? selectedMenu;
+  List<ProductList> filteredProductList = [];
 
-  void deleteRecord(String id) {
-    final List<ProductList> filteredArray = [];
-    for (var i = 0; i < productlist.length; i++) {
-      var item = productlist[i];
-      if (item.id != id) {
-        filteredArray.add(item);
+  @override
+  void initState() {
+    super.initState();
+    getCartProducts();
+  }
+
+  void formReset() {
+    _productForm.currentState!.reset();
+    setState(() {
+      selectedMenu = null;
+    });
+    _productNameController.clear();
+    _productQuanityController.clear();
+  }
+
+  void getCartProducts() async {
+    var data =
+        await _databaseServices.getData(_databaseServices.cartProductsList);
+    List<ProductList> newProductList = [];
+    List<ProductList> newFilteredProducts = [];
+
+    if (data.isEmpty) {
+      newFilteredProducts = productlist;
+    }
+
+    for (var item in data) {
+      for (var productItem in productlist) {
+        if (productItem.id != item["id"].toString()) {
+          newFilteredProducts.add(productItem);
+        }
       }
+      newProductList.add(ProductList(
+          discount: item["discount"]?.toString(),
+          quantity: item["quantity"] is int
+              ? item["quantity"]
+              : int.parse(item["quantity"].toString()),
+          name: item["name"].toString(),
+          id: item["id"].toString(),
+          amount: item["amount"].toString(),
+          grossAmount: item["grossAmount"].toString()));
     }
 
     setState(() {
-      productlist = filteredArray;
+      cartProductList = newProductList;
+      filteredProductList = newFilteredProducts;
     });
+  }
+
+  void addCartProduct(data) async {
+    await _databaseServices.addData(_databaseServices.cartProductsList, data);
+    formReset();
+    getCartProducts();
+  }
+
+  void deleteRecord(String id) async {
+    await _databaseServices.deleteData(id, _databaseServices.cartProductsList);
+    getCartProducts();
+  }
+
+  bool enableAddproduct() {
+    if (selectedMenu == null) {
+      return false;
+    }
+    return true;
   }
 
   @override
@@ -80,6 +153,10 @@ class _MainSales extends State<Sales> {
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800),
               ))),
       body: SingleChildScrollView(
+          child: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
         child: ConstrainedBox(
           constraints:
               const BoxConstraints(minHeight: 900, maxHeight: double.infinity),
@@ -138,123 +215,212 @@ class _MainSales extends State<Sales> {
                     ],
                   ),
                 ),
+                Form(
+                    key: _productForm,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      child: Container(
+                        height: 320,
+                        padding: const EdgeInsets.all(20),
+                        decoration: const BoxDecoration(
+                            color: Color.fromRGBO(240, 241, 254, 1),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(12))),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Add Products",
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  color: Color.fromRGBO(0, 0, 0, 1),
+                                  fontWeight: FontWeight.w900),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Padding(
+                                        padding:
+                                            EdgeInsets.symmetric(vertical: 8),
+                                        child: Text(
+                                          "Product name",
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              color: Color.fromRGBO(0, 0, 0, 1),
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        height: 44,
+                                        child: DropdownMenu<ProductList>(
+                                          requestFocusOnTap: true,
+                                          controller: _productNameController,
+                                          inputDecorationTheme:
+                                              const InputDecorationTheme(
+                                                  border: OutlineInputBorder(
+                                                      borderSide:
+                                                          BorderSide.none,
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  8))),
+                                                  filled: true,
+                                                  fillColor: Colors.white),
+                                          expandedInsets:
+                                              const EdgeInsets.all(2),
+                                          menuHeight: 200,
+                                          menuStyle: MenuStyle(
+                                            backgroundColor:
+                                                const WidgetStatePropertyAll(
+                                                    Colors.white),
+                                            shape: WidgetStatePropertyAll(
+                                              RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                side: BorderSide.none,
+                                              ),
+                                            ),
+                                          ),
+                                          dropdownMenuEntries:
+                                              filteredProductList
+                                                  .map((toElement) {
+                                            return DropdownMenuEntry<
+                                                ProductList>(
+                                              value: toElement,
+                                              label: toElement.name,
+                                            );
+                                          }).toList(),
+                                          enableSearch: true,
+                                          onSelected: (value) {
+                                            setState(() {
+                                              selectedMenu = value;
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Padding(
+                                        padding:
+                                            EdgeInsets.symmetric(vertical: 8),
+                                        child: Text(
+                                          "Quantity",
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              color: Color.fromRGBO(0, 0, 0, 1),
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                          height: 60,
+                                          width: double.infinity,
+                                          child: SizedBox(
+                                              height: 44,
+                                              child: TextFormField(
+                                                controller:
+                                                    _productQuanityController,
+                                                validator: (value) {
+                                                  if (value!.isEmpty) {
+                                                    return "Please enter a value";
+                                                  }
+                                                  return null;
+                                                },
+                                                keyboardType:
+                                                    TextInputType.number,
+                                                inputFormatters: [
+                                                  FilteringTextInputFormatter
+                                                      .allow(RegExp(
+                                                          r'^[1-9][0-9]*$')),
+                                                ],
+                                                decoration:
+                                                    const InputDecoration(
+                                                  contentPadding:
+                                                      EdgeInsets.symmetric(
+                                                          vertical: 10,
+                                                          horizontal: 12),
+                                                  filled: true,
+                                                  fillColor: Colors.white,
+                                                  border: OutlineInputBorder(
+                                                    borderSide: BorderSide.none,
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                      Radius.circular(8),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ))),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                                width: double.infinity,
+                                child: FilledButton(
+                                    onPressed: enableAddproduct()
+                                        ? () {
+                                            if (_productForm.currentState!
+                                                .validate()) {
+                                              Map<String, dynamic> productData =
+                                                  {
+                                                ...selectedMenu?.toMap() ?? {},
+                                                'quantity':
+                                                    _productQuanityController
+                                                        .value.text,
+                                                "customerIdentity": null,
+                                              };
+                                              print(productData);
+                                              addCartProduct(productData);
+                                            }
+                                          }
+                                        : null,
+                                    style: ButtonStyle(
+                                        backgroundColor: enableAddproduct()
+                                            ? const WidgetStatePropertyAll(
+                                                Color.fromRGBO(52, 120, 240, 1))
+                                            : const WidgetStatePropertyAll(
+                                                Colors.grey)),
+                                    child: const Text(
+                                      "Add Products",
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w800,
+                                          color:
+                                              Color.fromRGBO(255, 255, 255, 1)),
+                                    ))),
+                          ],
+                        ),
+                      ),
+                    )),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  child: Container(
-                    height: 320,
-                    padding: const EdgeInsets.all(20),
-                    decoration: const BoxDecoration(
-                        color: Color.fromRGBO(240, 241, 254, 1),
-                        borderRadius: BorderRadius.all(Radius.circular(12))),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Add Products",
-                          style: TextStyle(
-                              fontSize: 20,
-                              color: Color.fromRGBO(0, 0, 0, 1),
-                              fontWeight: FontWeight.w900),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 10),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 8),
-                                    child: Text(
-                                      "Product name",
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          color: Color.fromRGBO(0, 0, 0, 1),
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                      height: 44,
-                                      width: double.infinity,
-                                      child: TextField(
-                                        decoration: InputDecoration(
-                                            filled: true,
-                                            fillColor: Colors.white,
-                                            border: OutlineInputBorder(
-                                                borderSide: BorderSide.none,
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(8)))),
-                                      )),
-                                ],
-                              ),
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 8),
-                                    child: Text(
-                                      "Quantity",
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          color: Color.fromRGBO(0, 0, 0, 1),
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                      height: 44,
-                                      width: double.infinity,
-                                      child: TextField(
-                                        keyboardType: TextInputType.number,
-                                        decoration: InputDecoration(
-                                            filled: true,
-                                            fillColor: Colors.white,
-                                            border: OutlineInputBorder(
-                                                borderSide: BorderSide.none,
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(8)))),
-                                      )),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                            width: double.infinity,
-                            child: FilledButton(
-                                onPressed: () {
-                                  print("Check");
-                                },
-                                style: const ButtonStyle(
-                                    backgroundColor: WidgetStatePropertyAll(
-                                        Color.fromRGBO(52, 120, 240, 1))),
-                                child: const Text(
-                                  "Add Products",
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w800,
-                                      color: Color.fromRGBO(255, 255, 255, 1)),
-                                ))),
-                      ],
-                    ),
-                  ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 20),
+                  padding: const EdgeInsets.symmetric(vertical: 20),
                   child: Text(
-                    "Products list",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+                    "Products list (${cartProductList.length})",
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.w800),
                   ),
                 ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: List.generate(productlist.length, (generator) {
-                    var item = productlist[generator];
+                  children: List.generate(cartProductList.length, (generator) {
+                    var item = cartProductList[generator];
 
                     return Column(
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -290,8 +456,8 @@ class _MainSales extends State<Sales> {
                                               fontWeight: FontWeight.w600),
                                         ),
                                         Padding(
-                                          padding:
-                                              EdgeInsets.symmetric(vertical: 4),
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 4),
                                           child: Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.start,
@@ -364,7 +530,7 @@ class _MainSales extends State<Sales> {
                                                                   left: 10,
                                                                   right: 8),
                                                           child: Text(
-                                                            "\$${item.originalPrice}",
+                                                            "₹${item.grossAmount}",
                                                             style: const TextStyle(
                                                                 fontSize: 13,
                                                                 fontWeight:
@@ -420,18 +586,23 @@ class _MainSales extends State<Sales> {
                 SizedBox(
                     width: double.infinity,
                     child: FilledButton(
-                        onPressed: () {
-                          showModalBottomSheet<void>(
-                            context: context,
-                            isScrollControlled: true,
-                            builder: (BuildContext context) {
-                              return MainPaymentInfo(products: productlist);
-                            },
-                          );
-                        },
-                        style: const ButtonStyle(
-                            backgroundColor: WidgetStatePropertyAll(
-                                Color.fromRGBO(52, 120, 240, 1))),
+                        onPressed: cartProductList.isEmpty
+                            ? null
+                            : () {
+                                showModalBottomSheet<void>(
+                                  context: context,
+                                  isScrollControlled: true,
+                                  builder: (BuildContext context) {
+                                    return MainPaymentInfo(
+                                        products: cartProductList);
+                                  },
+                                );
+                              },
+                        style: ButtonStyle(
+                            backgroundColor: cartProductList.isEmpty
+                                ? const WidgetStatePropertyAll(Colors.grey)
+                                : const WidgetStatePropertyAll(
+                                    Color.fromRGBO(52, 120, 240, 1))),
                         child: const Text(
                           "Add Payment Info",
                           style: TextStyle(
@@ -443,7 +614,7 @@ class _MainSales extends State<Sales> {
             ),
           ),
         ),
-      ),
+      )),
     );
   }
 }

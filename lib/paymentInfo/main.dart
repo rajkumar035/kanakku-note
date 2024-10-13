@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kn_pos/sales/main.dart';
@@ -5,8 +7,10 @@ import 'package:kn_pos/sales/main.dart';
 class PaymentInfoList {
   int amount;
   String? method;
+  String id;
 
-  PaymentInfoList({required this.amount, required this.method});
+  PaymentInfoList(
+      {required this.amount, required this.method, required this.id});
 }
 
 class Paymentinfo extends State<MainPaymentInfo> {
@@ -14,7 +18,7 @@ class Paymentinfo extends State<MainPaymentInfo> {
   Paymentinfo({required this.products});
 
   List<PaymentInfoList> paymentInfoList = [
-    PaymentInfoList(amount: 0, method: null)
+    PaymentInfoList(amount: 0, method: null, id: "902323")
   ];
 
   final List<String> paymentOptions = [
@@ -26,16 +30,25 @@ class Paymentinfo extends State<MainPaymentInfo> {
     "Gift Card"
   ];
 
+  String generateRandomNumber() {
+    Random random = Random();
+    int randomNumber = random.nextInt(900000) + 100000;
+    return randomNumber.toString();
+  }
+
   int calculateMainTotal() {
-    return products.fold(0, (sum, product) {
-      return sum + int.parse(product.originalPrice);
+    var data = products.fold(0, (sum, product) {
+      return sum +
+          ((double.tryParse(product.grossAmount)?.toInt() ?? 0) *
+              product.quantity);
     });
+    return data;
   }
 
   int calculateDiscount() {
     return products.fold(0, (sum, product) {
       if (product.discount != null) {
-        return sum + int.parse(product.discount!);
+        return sum + (double.tryParse(product.discount!)?.toInt() ?? 0);
       }
       return sum;
     });
@@ -43,7 +56,7 @@ class Paymentinfo extends State<MainPaymentInfo> {
 
   int calculateTotal() {
     return products.fold(0, (sum, product) {
-      return sum + int.parse(product.price);
+      return sum + (int.parse(product.amount) * product.quantity);
     });
   }
 
@@ -53,15 +66,30 @@ class Paymentinfo extends State<MainPaymentInfo> {
     });
   }
 
+  void handleAddNewEmptyRecord(String price, PaymentInfoList data) {
+    var customPaymentInfoList = paymentInfoList;
+
+    if (price.isEmpty || int.parse(price) == 0) {
+      customPaymentInfoList.removeWhere((item) => item.id == data.id);
+    } else {
+      customPaymentInfoList.add(
+          PaymentInfoList(amount: 0, method: null, id: generateRandomNumber()));
+    }
+
+    setState(() {
+      paymentInfoList = customPaymentInfoList;
+    });
+  }
+
   void handlePaymentAmount(int price, int index) {
     final List<PaymentInfoList> calculateProducts = paymentInfoList
-        .map(
-            (item) => PaymentInfoList(amount: item.amount, method: item.method))
+        .map((item) => PaymentInfoList(
+            amount: item.amount, method: item.method, id: item.id))
         .toList();
 
     final List<PaymentInfoList> sampleProducts = paymentInfoList
-        .map(
-            (item) => PaymentInfoList(amount: item.amount, method: item.method))
+        .map((item) => PaymentInfoList(
+            amount: item.amount, method: item.method, id: item.id))
         .toList();
 
     calculateProducts[index].amount = price;
@@ -91,7 +119,7 @@ class Paymentinfo extends State<MainPaymentInfo> {
   void handleAddPayment() {
     final List<PaymentInfoList> sampleProducts = [
       ...paymentInfoList,
-      PaymentInfoList(amount: 0, method: null)
+      PaymentInfoList(amount: 0, method: null, id: generateRandomNumber())
     ];
 
     setState(() {
@@ -152,7 +180,7 @@ class Paymentinfo extends State<MainPaymentInfo> {
                         style: TextStyle(
                             fontSize: 14, fontWeight: FontWeight.w600),
                       ),
-                      Text("\$${calculateMainTotal()}",
+                      Text("₹${calculateMainTotal()}",
                           style: const TextStyle(
                               fontSize: 14, fontWeight: FontWeight.w600))
                     ],
@@ -169,7 +197,7 @@ class Paymentinfo extends State<MainPaymentInfo> {
                         style: TextStyle(
                             fontSize: 14, fontWeight: FontWeight.w600),
                       ),
-                      Text("-\$${calculateDiscount()}",
+                      Text("-₹${calculateDiscount()}",
                           style: const TextStyle(
                               fontSize: 14, fontWeight: FontWeight.w600))
                     ],
@@ -184,7 +212,7 @@ class Paymentinfo extends State<MainPaymentInfo> {
                       const Text("Total:",
                           style: TextStyle(
                               fontSize: 14, fontWeight: FontWeight.w600)),
-                      Text("\$${calculateTotal()}",
+                      Text("₹${calculateTotal()}",
                           style: const TextStyle(
                               fontSize: 14, fontWeight: FontWeight.w600))
                     ],
@@ -279,6 +307,7 @@ class Paymentinfo extends State<MainPaymentInfo> {
                                           handlePaymentAmount(
                                               int.parse(value), index);
                                         }
+                                        // handleAddNewEmptyRecord(value, item);
                                       },
                                       controller: TextEditingController(
                                           text: item.amount.toString())
@@ -300,8 +329,18 @@ class Paymentinfo extends State<MainPaymentInfo> {
                               height: 40,
                               width: 40,
                               child: isLastIndex
-                                  ? IconButton(
+                                  ? FilledButton(
                                       style: ButtonStyle(
+                                        shape: const WidgetStatePropertyAll(
+                                            RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.only(
+                                                    topLeft: Radius.circular(8),
+                                                    topRight:
+                                                        Radius.circular(8),
+                                                    bottomLeft:
+                                                        Radius.circular(8),
+                                                    bottomRight:
+                                                        Radius.circular(8)))),
                                         padding: const WidgetStatePropertyAll(
                                             EdgeInsets.all(0)),
                                         backgroundColor: WidgetStatePropertyAll(
@@ -312,21 +351,33 @@ class Paymentinfo extends State<MainPaymentInfo> {
                                       onPressed: () {
                                         handleAddPayment();
                                       },
-                                      icon: const Icon(
+                                      child: const Icon(
                                         Icons.add,
                                         size: 14,
                                         color: Colors.white,
                                       ),
                                     )
-                                  : IconButton(
+                                  : FilledButton(
                                       style: const ButtonStyle(
+                                        padding: WidgetStatePropertyAll(
+                                            EdgeInsets.all(0)),
+                                        shape: WidgetStatePropertyAll(
+                                            RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.only(
+                                                    topLeft: Radius.circular(8),
+                                                    topRight:
+                                                        Radius.circular(8),
+                                                    bottomLeft:
+                                                        Radius.circular(8),
+                                                    bottomRight:
+                                                        Radius.circular(8)))),
                                         backgroundColor:
                                             WidgetStatePropertyAll(Colors.red),
                                       ),
                                       onPressed: () {
                                         handleRemovePayment(index);
                                       },
-                                      icon: const Icon(
+                                      child: const Icon(
                                         Icons.remove,
                                         size: 14,
                                         color: Colors.white,
