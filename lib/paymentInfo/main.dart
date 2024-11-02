@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kn_pos/sales/main.dart';
@@ -16,11 +15,6 @@ class PaymentInfoList {
 class Paymentinfo extends State<MainPaymentInfo> {
   final List<ProductList> products;
   Paymentinfo({required this.products});
-
-  List<PaymentInfoList> paymentInfoList = [
-    PaymentInfoList(amount: 0, method: null, id: "902323")
-  ];
-
   final List<String> paymentOptions = [
     "Cash",
     "Credit",
@@ -28,6 +22,10 @@ class Paymentinfo extends State<MainPaymentInfo> {
     "Credit Card",
     "UPI",
     "Gift Card"
+  ];
+
+  List<PaymentInfoList> paymentInfoList = [
+    PaymentInfoList(amount: 0, method: null, id: "902323")
   ];
 
   String generateRandomNumber() {
@@ -46,18 +44,11 @@ class Paymentinfo extends State<MainPaymentInfo> {
   }
 
   int calculateDiscount() {
-    return products.fold(0, (sum, product) {
-      if (product.discount != null) {
-        return sum + (double.tryParse(product.discount!)?.toInt() ?? 0);
-      }
-      return sum;
+    var data = products.fold(0, (sum, product) {
+      return sum +
+          ((double.tryParse(product.amount)?.toInt() ?? 0) * product.quantity);
     });
-  }
-
-  int calculateTotal() {
-    return products.fold(0, (sum, product) {
-      return sum + (int.parse(product.amount) * product.quantity);
-    });
+    return calculateMainTotal() - data;
   }
 
   int calculatePaymentTotal() {
@@ -66,19 +57,9 @@ class Paymentinfo extends State<MainPaymentInfo> {
     });
   }
 
-  void handleAddNewEmptyRecord(String price, PaymentInfoList data) {
-    var customPaymentInfoList = paymentInfoList;
-
-    if (price.isEmpty || int.parse(price) == 0) {
-      customPaymentInfoList.removeWhere((item) => item.id == data.id);
-    } else {
-      customPaymentInfoList.add(
-          PaymentInfoList(amount: 0, method: null, id: generateRandomNumber()));
-    }
-
-    setState(() {
-      paymentInfoList = customPaymentInfoList;
-    });
+  double calculateTotal() {
+    return (calculateMainTotal() + ((calculateMainTotal() / 100) * 18)) -
+        calculateDiscount();
   }
 
   void handlePaymentAmount(int price, int index) {
@@ -110,18 +91,6 @@ class Paymentinfo extends State<MainPaymentInfo> {
   void handlePaymentMethod(String? method, int index) {
     final List<PaymentInfoList> sampleProducts = [...paymentInfoList];
     sampleProducts[index].method = method;
-
-    setState(() {
-      paymentInfoList = sampleProducts;
-    });
-  }
-
-  void handleAddPayment() {
-    final List<PaymentInfoList> sampleProducts = [
-      ...paymentInfoList,
-      PaymentInfoList(amount: 0, method: null, id: generateRandomNumber())
-    ];
-
     setState(() {
       paymentInfoList = sampleProducts;
     });
@@ -144,6 +113,31 @@ class Paymentinfo extends State<MainPaymentInfo> {
 
   bool isAmountSame() {
     return calculateTotal() == calculatePaymentTotal();
+  }
+
+  void handleAddNewEmptyRecord(String price, PaymentInfoList data) {
+    var customPaymentInfoList = paymentInfoList;
+    var customPrice = price.isEmpty ? "0" : price;
+
+    var getIndex =
+        customPaymentInfoList.indexWhere((pays) => pays.id == data.id);
+
+    if (getIndex == customPaymentInfoList.length - 1) {
+      if (int.parse(customPrice) > 0) {
+        customPaymentInfoList.add(PaymentInfoList(
+            amount: 0, method: null, id: generateRandomNumber()));
+      } else {
+        customPaymentInfoList.removeLast();
+      }
+    } else {
+      if (int.parse(customPrice) == 0) {
+        customPaymentInfoList.removeWhere((pays) => pays.id == data.id);
+      }
+    }
+
+    setState(() {
+      paymentInfoList = customPaymentInfoList;
+    });
   }
 
   @override
@@ -182,6 +176,23 @@ class Paymentinfo extends State<MainPaymentInfo> {
                       ),
                       Text("₹${calculateMainTotal()}",
                           style: const TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w600))
+                    ],
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 3),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Tax:",
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w600),
+                      ),
+                      Text("+18%",
+                          style: TextStyle(
                               fontSize: 14, fontWeight: FontWeight.w600))
                     ],
                   ),
@@ -226,138 +237,133 @@ class Paymentinfo extends State<MainPaymentInfo> {
               child: SingleChildScrollView(
                 child: Column(
                   children: List.generate(paymentInfoList.length, (index) {
-                    var isLastIndex = index == (paymentInfoList.length - 1);
                     var item = paymentInfoList[index];
                     var method = item.method;
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                              width: 140,
-                              height: 40,
-                              child: Container(
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(
-                                          width: 1.5,
-                                          color: const Color.fromRGBO(
-                                              0, 0, 0, 0.5))),
-                                  child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 3, horizontal: 6),
-                                      child: DropdownButtonHideUnderline(
-                                        child: DropdownButton<String>(
-                                          isExpanded: true,
-                                          onChanged: (value) {
-                                            handlePaymentMethod(value, index);
-                                          },
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                          value: item.method,
-                                          style: const TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.black),
-                                          hint: const Text(
-                                            "Payment Methods",
-                                            style: TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w500),
-                                          ),
-                                          items:
-                                              paymentOptions.map((String item) {
-                                            return DropdownMenuItem<String>(
-                                              value: item,
-                                              child: Text(
-                                                item,
+                    var isLastIndex = index == paymentInfoList.length - 1;
+                    return isLastIndex && isAmountSame()
+                        ? const SizedBox.shrink()
+                        : Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                    width: 140,
+                                    height: 40,
+                                    child: Container(
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            border: Border.all(
+                                                width: 1.5,
+                                                color: const Color.fromRGBO(
+                                                    0, 0, 0, 0.5))),
+                                        child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 3, horizontal: 6),
+                                            child: DropdownButtonHideUnderline(
+                                              child: DropdownButton<String>(
+                                                isExpanded: true,
+                                                onChanged: (value) {
+                                                  var hasValue = paymentInfoList
+                                                      .where((data) =>
+                                                          // ignore: unrelated_type_equality_checks
+                                                          data.method == value);
+                                                  if (hasValue.isEmpty) {
+                                                    handlePaymentMethod(
+                                                        value, index);
+                                                  }
+                                                },
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                                value: item.method,
                                                 style: const TextStyle(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.w500,
                                                     color: Colors.black),
+                                                hint: const Text(
+                                                  "Payment Methods",
+                                                  style: TextStyle(
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.w500),
+                                                ),
+                                                items: paymentOptions
+                                                    .map((String item) {
+                                                  var hasValue = paymentInfoList
+                                                      .where((data) =>
+                                                          // ignore: unrelated_type_equality_checks
+                                                          data.method == item);
+                                                  return DropdownMenuItem<
+                                                      String>(
+                                                    value: item,
+                                                    child: Text(
+                                                      item,
+                                                      style: TextStyle(
+                                                          color: hasValue
+                                                                  .isNotEmpty
+                                                              ? const Color
+                                                                  .fromRGBO(
+                                                                  0, 0, 0, 0.5)
+                                                              : Colors.black),
+                                                    ),
+                                                  );
+                                                }).toList(),
                                               ),
-                                            );
-                                          }).toList(),
-                                        ),
-                                      )))),
-                          SizedBox(
-                              width: 140,
-                              height: 38,
-                              child: Container(
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(
-                                          width: 1.5,
-                                          color: const Color.fromRGBO(
-                                              0, 0, 0, 0.5))),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 8, horizontal: 6),
-                                    child: TextField(
-                                      enabled: method != null,
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500),
-                                      keyboardType: TextInputType.number,
-                                      inputFormatters: <TextInputFormatter>[
-                                        FilteringTextInputFormatter.digitsOnly
-                                      ],
-                                      onChanged: (value) {
-                                        if (value.isNotEmpty) {
-                                          handlePaymentAmount(
-                                              int.parse(value), index);
-                                        }
-                                        // handleAddNewEmptyRecord(value, item);
-                                      },
-                                      controller: TextEditingController(
-                                          text: item.amount.toString())
-                                        ..selection =
-                                            TextSelection.fromPosition(
-                                                TextPosition(
-                                                    offset: item.amount
-                                                        .toString()
-                                                        .length)),
-                                      decoration: const InputDecoration(
-                                        border: InputBorder.none,
-                                        hintStyle: TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                    ),
-                                  ))),
-                          SizedBox(
-                              height: 40,
-                              width: 40,
-                              child: isLastIndex
-                                  ? FilledButton(
-                                      style: ButtonStyle(
-                                        shape: const WidgetStatePropertyAll(
-                                            RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.only(
-                                                    topLeft: Radius.circular(8),
-                                                    topRight:
-                                                        Radius.circular(8),
-                                                    bottomLeft:
-                                                        Radius.circular(8),
-                                                    bottomRight:
-                                                        Radius.circular(8)))),
-                                        padding: const WidgetStatePropertyAll(
-                                            EdgeInsets.all(0)),
-                                        backgroundColor: WidgetStatePropertyAll(
-                                            isAmountSame()
-                                                ? Colors.grey
-                                                : Colors.blue),
-                                      ),
-                                      onPressed: () {
-                                        handleAddPayment();
-                                      },
-                                      child: const Icon(
-                                        Icons.add,
-                                        size: 14,
-                                        color: Colors.white,
-                                      ),
-                                    )
-                                  : FilledButton(
+                                            )))),
+                                SizedBox(
+                                    width: 140,
+                                    height: 38,
+                                    child: Container(
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            border: Border.all(
+                                                width: 1.5,
+                                                color: const Color.fromRGBO(
+                                                    0, 0, 0, 0.5))),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 8, horizontal: 6),
+                                          child: TextField(
+                                            enabled: method != null,
+                                            style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500),
+                                            keyboardType: TextInputType.number,
+                                            inputFormatters: <TextInputFormatter>[
+                                              FilteringTextInputFormatter
+                                                  .digitsOnly
+                                            ],
+                                            onChanged: (value) {
+                                              if (value.isNotEmpty) {
+                                                handlePaymentAmount(
+                                                    int.parse(value), index);
+                                              }
+                                              handleAddNewEmptyRecord(
+                                                  value, item);
+                                            },
+                                            controller: TextEditingController(
+                                                text: item.amount.toString())
+                                              ..selection =
+                                                  TextSelection.fromPosition(
+                                                      TextPosition(
+                                                          offset: item.amount
+                                                              .toString()
+                                                              .length)),
+                                            decoration: const InputDecoration(
+                                              border: InputBorder.none,
+                                              hintStyle: TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w500),
+                                            ),
+                                          ),
+                                        ))),
+                                SizedBox(
+                                    height: 40,
+                                    width: 40,
+                                    child: FilledButton(
                                       style: const ButtonStyle(
                                         padding: WidgetStatePropertyAll(
                                             EdgeInsets.all(0)),
@@ -383,9 +389,9 @@ class Paymentinfo extends State<MainPaymentInfo> {
                                         color: Colors.white,
                                       ),
                                     )),
-                        ],
-                      ),
-                    );
+                              ],
+                            ),
+                          );
                   }),
                 ),
               ),

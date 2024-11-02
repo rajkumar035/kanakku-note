@@ -66,122 +66,135 @@ class _Starter extends State<MyStarter> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
-            child: GestureDetector(
-              onTap: () {
-                FocusScope.of(context).unfocus();
-              },
-              child: Center(
-                child: ConstrainedBox(
-                    constraints: const BoxConstraints(
-                        maxHeight: double.infinity, minHeight: 100),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(top: 100, bottom: 60),
-                              child: Image.asset(
-                                "assets/images/logo.png",
-                                height: 140,
-                                fit: BoxFit.cover,
+      resizeToAvoidBottomInset: true,
+      body: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+        child: GestureDetector(
+            onTap: () {
+              FocusScope.of(context).unfocus();
+            },
+            child: Center(
+                child: SingleChildScrollView(
+                    child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxHeight: 700,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SingleChildScrollView(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        maxHeight: 450,
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 0, bottom: 0),
+                            child: Image.asset(
+                              "assets/images/logo.png",
+                              height: 140,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.only(bottom: 0),
+                            child: Text(
+                              "Quick PoS",
+                              style: TextStyle(
+                                color: Color.fromRGBO(61, 101, 124, 1),
+                                fontSize: 36,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                            const Padding(
-                              padding: EdgeInsets.only(bottom: 60),
-                              child: Text(
-                                "Quick PoS",
-                                style: TextStyle(
-                                    color: Color.fromRGBO(56, 56, 57, 1),
-                                    fontSize: 36,
-                                    fontWeight: FontWeight.bold),
-                              ),
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.only(bottom: 0),
+                            child: Icon(
+                              Icons.store,
+                              color: Color.fromRGBO(61, 101, 124, 1),
+                              size: 60,
                             ),
-                            const Padding(
-                              padding: EdgeInsets.only(bottom: 10),
-                              child: Icon(
-                                Icons.store,
-                                color: Color.fromARGB(255, 0, 0, 0),
-                                size: 60,
-                              ),
+                          ),
+                          Container(
+                            width: 300,
+                            decoration: BoxDecoration(
+                              color: const Color.fromRGBO(0, 0, 0, 255),
+                              borderRadius: BorderRadius.circular(50.0),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Color.fromRGBO(0, 0, 0, 0.3),
+                                  spreadRadius: 0.0,
+                                  blurRadius: 4.0,
+                                  offset: Offset(0, 2),
+                                )
+                              ],
                             ),
-                            Container(
-                              width: 300,
-                              decoration: BoxDecoration(
-                                color: const Color.fromRGBO(0, 0, 0, 255),
-                                borderRadius: BorderRadius.circular(50.0),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: Color.fromRGBO(0, 0, 0, 0.3),
-                                    spreadRadius: 0.0,
-                                    blurRadius: 4.0,
-                                    offset: Offset(0, 2),
-                                  )
-                                ],
-                              ),
-                              child: TextFormField(
-                                controller: _entityFieldController,
-                                validator: (value) {
-                                  if (value == null || value == "") {
-                                    return "Please enter some text";
-                                  }
-                                  return null;
-                                },
-                                decoration: InputDecoration(
-                                  hintText: "Entity code",
-                                  filled: true,
-                                  fillColor: Colors.white,
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 20),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(50.0),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(50.0),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(50.0),
-                                    borderSide: BorderSide.none,
-                                  ),
+                            child: TextFormField(
+                              controller: _entityFieldController,
+                              validator: (value) {
+                                if (value == null || value == "") {
+                                  return "Please enter some text";
+                                }
+                                return null;
+                              },
+                              decoration: InputDecoration(
+                                hintText: "Entity code",
+                                filled: true,
+                                fillColor: Colors.white,
+                                contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 10, horizontal: 20),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(50.0),
+                                  borderSide: BorderSide.none,
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(50.0),
+                                  borderSide: BorderSide.none,
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(50.0),
+                                  borderSide: BorderSide.none,
                                 ),
                               ),
-                            )
-                          ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 40,
+                    child: FilledButton(
+                      onPressed: () {
+                        if (_entityFieldController.text.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Please enter some text"),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        } else {
+                          handleEntity();
+                        }
+                      },
+                      style: const ButtonStyle(
+                        backgroundColor: WidgetStatePropertyAll(
+                          Color.fromRGBO(61, 101, 124, 1),
                         ),
-                        SizedBox(
-                          width: double.infinity,
-                          height: 40,
-                          child: FilledButton(
-                              onPressed: () {
-                                if (_entityFieldController.text.isEmpty) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text("Please enter some text"),
-                                      backgroundColor: Colors.red,
-                                    ),
-                                  );
-                                } else {
-                                  handleEntity();
-                                }
-                              },
-                              style: const ButtonStyle(
-                                backgroundColor: WidgetStatePropertyAll(
-                                    Color.fromRGBO(61, 101, 124, 1)),
-                              ),
-                              child: const Text("Get Started")),
-                        )
-                      ],
-                    )),
+                      ),
+                      child: const Text("Get Started"),
+                    ),
+                  ),
+                ],
               ),
-            )));
+            )))),
+      ),
+    );
   }
 }
 

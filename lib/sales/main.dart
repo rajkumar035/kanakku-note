@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kn_pos/paymentInfo/main.dart';
 import 'package:kn_pos/server/db.dart';
+import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 
 class ProductList {
   final int quantity;
@@ -73,6 +74,7 @@ class _MainSales extends State<Sales> {
   List<ProductList> cartProductList = [];
   ProductList? selectedMenu;
   List<ProductList> filteredProductList = [];
+  String? result;
 
   @override
   void initState() {
@@ -92,29 +94,29 @@ class _MainSales extends State<Sales> {
   void getCartProducts() async {
     var data =
         await _databaseServices.getData(_databaseServices.cartProductsList);
+
     List<ProductList> newProductList = [];
-    List<ProductList> newFilteredProducts = [];
+    List<ProductList> newFilteredProducts;
 
-    if (data.isEmpty) {
-      newFilteredProducts = productlist;
-    }
+    Set<String> cartProductIds =
+        data.map((item) => item["id"].toString()).toSet();
 
-    for (var item in data) {
-      for (var productItem in productlist) {
-        if (productItem.id != item["id"].toString()) {
-          newFilteredProducts.add(productItem);
-        }
-      }
-      newProductList.add(ProductList(
-          discount: item["discount"]?.toString(),
-          quantity: item["quantity"] is int
-              ? item["quantity"]
-              : int.parse(item["quantity"].toString()),
-          name: item["name"].toString(),
-          id: item["id"].toString(),
-          amount: item["amount"].toString(),
-          grossAmount: item["grossAmount"].toString()));
-    }
+    newProductList = data.map((item) {
+      return ProductList(
+        discount: item["discount"]?.toString(),
+        quantity: item["quantity"] is int
+            ? item["quantity"]
+            : int.parse(item["quantity"].toString()),
+        name: item["name"].toString(),
+        id: item["id"].toString(),
+        amount: item["amount"].toString(),
+        grossAmount: item["grossAmount"].toString(),
+      );
+    }).toList();
+
+    newFilteredProducts = productlist.where((productItem) {
+      return !cartProductIds.contains(productItem.id);
+    }).toList();
 
     setState(() {
       cartProductList = newProductList;
@@ -128,9 +130,55 @@ class _MainSales extends State<Sales> {
     getCartProducts();
   }
 
+  void scanProduct() async {
+    ProductList? selectedData;
+    var res = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const SimpleBarcodeScannerPage(),
+        ));
+
+    var findData = filteredProductList.firstWhere(
+        (products) => products.id == res,
+        orElse: () => ProductList(
+            quantity: 0, name: "", id: "", amount: "", grossAmount: ""));
+
+    if (findData.id == "") {
+      selectedData = null;
+    } else {
+      selectedData = findData;
+    }
+
+    setState(() {
+      selectedMenu = selectedData;
+    });
+  }
+
   void deleteRecord(String id) async {
     await _databaseServices.deleteData(id, _databaseServices.cartProductsList);
     getCartProducts();
+  }
+
+  int calculateMainTotal() {
+    var data = cartProductList.fold(0, (sum, product) {
+      return sum +
+          ((double.tryParse(product.grossAmount)?.toInt() ?? 0) *
+              product.quantity);
+    });
+    return data;
+  }
+
+  int calculateDiscount() {
+    var data = cartProductList.fold(0, (sum, product) {
+      return sum +
+          ((double.tryParse(product.amount)?.toInt() ?? 0) * product.quantity);
+    });
+    return calculateMainTotal() - data;
+  }
+
+  double calculateTotal() {
+    return (calculateMainTotal() + ((calculateMainTotal() / 100) * 18)) -
+        calculateDiscount();
   }
 
   bool enableAddproduct() {
@@ -220,7 +268,6 @@ class _MainSales extends State<Sales> {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 15),
                       child: Container(
-                        height: 320,
                         padding: const EdgeInsets.all(20),
                         decoration: const BoxDecoration(
                             color: Color.fromRGBO(240, 241, 254, 1),
@@ -240,8 +287,8 @@ class _MainSales extends State<Sales> {
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Column(
                                     mainAxisAlignment: MainAxisAlignment.start,
@@ -259,55 +306,88 @@ class _MainSales extends State<Sales> {
                                               fontWeight: FontWeight.w600),
                                         ),
                                       ),
-                                      SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        height: 44,
-                                        child: DropdownMenu<ProductList>(
-                                          requestFocusOnTap: true,
-                                          controller: _productNameController,
-                                          inputDecorationTheme:
-                                              const InputDecorationTheme(
-                                                  border: OutlineInputBorder(
-                                                      borderSide:
-                                                          BorderSide.none,
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Expanded(
+                                            child: SizedBox(
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              height: 44,
+                                              child: DropdownMenu<ProductList>(
+                                                requestFocusOnTap: true,
+                                                controller:
+                                                    _productNameController,
+                                                inputDecorationTheme:
+                                                    const InputDecorationTheme(
+                                                        border: OutlineInputBorder(
+                                                            borderSide:
+                                                                BorderSide.none,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .all(Radius
+                                                                        .circular(
+                                                                            8))),
+                                                        filled: true,
+                                                        fillColor:
+                                                            Colors.white),
+                                                expandedInsets:
+                                                    const EdgeInsets.all(2),
+                                                menuHeight: 200,
+                                                menuStyle: MenuStyle(
+                                                  backgroundColor:
+                                                      const WidgetStatePropertyAll(
+                                                          Colors.white),
+                                                  shape: WidgetStatePropertyAll(
+                                                    RoundedRectangleBorder(
                                                       borderRadius:
-                                                          BorderRadius.all(
-                                                              Radius.circular(
-                                                                  8))),
-                                                  filled: true,
-                                                  fillColor: Colors.white),
-                                          expandedInsets:
-                                              const EdgeInsets.all(2),
-                                          menuHeight: 200,
-                                          menuStyle: MenuStyle(
-                                            backgroundColor:
-                                                const WidgetStatePropertyAll(
-                                                    Colors.white),
-                                            shape: WidgetStatePropertyAll(
-                                              RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                side: BorderSide.none,
+                                                          BorderRadius.circular(
+                                                              8),
+                                                      side: BorderSide.none,
+                                                    ),
+                                                  ),
+                                                ),
+                                                initialSelection: selectedMenu,
+                                                dropdownMenuEntries:
+                                                    filteredProductList
+                                                        .map((toElement) {
+                                                  return DropdownMenuEntry<
+                                                      ProductList>(
+                                                    value: toElement,
+                                                    label: toElement.name,
+                                                  );
+                                                }).toList(),
+                                                enableSearch: true,
+                                                onSelected: (value) {
+                                                  setState(() {
+                                                    selectedMenu = value;
+                                                  });
+                                                },
                                               ),
                                             ),
                                           ),
-                                          dropdownMenuEntries:
-                                              filteredProductList
-                                                  .map((toElement) {
-                                            return DropdownMenuEntry<
-                                                ProductList>(
-                                              value: toElement,
-                                              label: toElement.name,
-                                            );
-                                          }).toList(),
-                                          enableSearch: true,
-                                          onSelected: (value) {
-                                            setState(() {
-                                              selectedMenu = value;
-                                            });
-                                          },
-                                        ),
+                                          Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 8),
+                                              child: FilledButton(
+                                                  style: const ButtonStyle(
+                                                      backgroundColor:
+                                                          WidgetStatePropertyAll(
+                                                              Color.fromRGBO(
+                                                                  52,
+                                                                  120,
+                                                                  240,
+                                                                  1))),
+                                                  onPressed: () async {
+                                                    scanProduct();
+                                                  },
+                                                  child: const Icon(Icons
+                                                      .qr_code_scanner_rounded)))
+                                        ],
                                       ),
                                     ],
                                   ),
@@ -408,6 +488,80 @@ class _MainSales extends State<Sales> {
                         ),
                       ),
                     )),
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: const BoxDecoration(
+                      color: Color.fromRGBO(240, 241, 254, 1),
+                      borderRadius: BorderRadius.all(Radius.circular(12))),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Total Summary",
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: Color.fromRGBO(0, 0, 0, 1),
+                            fontWeight: FontWeight.w900),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 14),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 5),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  const Text("Subtotal"),
+                                  Text(
+                                      "${double.parse(calculateMainTotal().toString())}")
+                                ],
+                              ),
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 6),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [Text("Tax"), Text("+18%")],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 6),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  const Text("Discount"),
+                                  Text(
+                                      "-${double.parse(calculateDiscount().toString())}")
+                                ],
+                              ),
+                            ),
+                            Padding(
+                                padding: const EdgeInsets.only(top: 6),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    const Text("Total"),
+                                    Text("${calculateTotal()}")
+                                  ],
+                                ))
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 20),
                   child: Text(
@@ -482,7 +636,7 @@ class _MainSales extends State<Sales> {
                                                         .symmetric(
                                                         horizontal: 10),
                                                     child: Text(
-                                                      "${item.quantity}",
+                                                      "${item.quantity} x ${item.grossAmount}",
                                                       style: const TextStyle(
                                                           fontSize: 13,
                                                           fontWeight:
@@ -530,7 +684,7 @@ class _MainSales extends State<Sales> {
                                                                   left: 10,
                                                                   right: 8),
                                                           child: Text(
-                                                            "₹${item.grossAmount}",
+                                                            "₹${((double.tryParse(item.grossAmount)?.toInt() ?? 0) * item.quantity)}",
                                                             style: const TextStyle(
                                                                 fontSize: 13,
                                                                 fontWeight:
@@ -541,7 +695,7 @@ class _MainSales extends State<Sales> {
                                                         if (item.discount !=
                                                             null)
                                                           Text(
-                                                            "-${item.discount}",
+                                                            "-${((((double.tryParse(item.grossAmount)?.toInt() ?? 0) * item.quantity) / 100) * (double.tryParse(item.discount!)?.toInt() ?? 0))}",
                                                             style: const TextStyle(
                                                                 fontSize: 11,
                                                                 fontWeight:

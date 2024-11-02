@@ -153,17 +153,17 @@ class _MyLogin extends State<Login> {
                       )
                     ],
                   ),
-                  TextButton(
-                      onPressed: () {
-                        print("forgot password");
-                      },
-                      child: const Text(
-                        "Forgot your password ?",
-                        style: TextStyle(
-                            color: Color.fromRGBO(57, 57, 58, 1),
-                            fontSize: 12,
-                            fontWeight: FontWeight.w800),
-                      ))
+                  // TextButton(
+                  //     onPressed: () {
+                  //       print("forgot password");
+                  //     },
+                  //     child: const Text(
+                  //       "Forgot your password ?",
+                  //       style: TextStyle(
+                  //           color: Color.fromRGBO(57, 57, 58, 1),
+                  //           fontSize: 12,
+                  //           fontWeight: FontWeight.w800),
+                  //     ))
                 ],
               ),
             ),
@@ -187,83 +187,83 @@ class _MyLogin extends State<Login> {
                         fontWeight: FontWeight.w700),
                   )),
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: Divider(
-                      color: Colors.grey,
-                      thickness: 2,
-                      indent: 10,
-                      endIndent: 10,
-                    ),
-                  ),
-                  Text(
-                    "OR",
-                    style: TextStyle(
-                      color: Color.fromRGBO(0, 0, 0, 0.5),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  Expanded(
-                    child: Divider(
-                      color: Colors.grey,
-                      thickness: 2,
-                      indent: 10,
-                      endIndent: 10,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: SizedBox(
-                    width: 140,
-                    height: 35,
-                    child: FilledButton(
-                        onPressed: () {
-                          print("facebook");
-                        },
-                        style: const ButtonStyle(
-                            backgroundColor: WidgetStatePropertyAll(
-                                Color.fromRGBO(61, 101, 124, 1))),
-                        child: const Text(
-                          "Facebook",
-                          style: TextStyle(
-                              color: Color.fromARGB(255, 255, 255, 255)),
-                        )),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: SizedBox(
-                    width: 140,
-                    height: 35,
-                    child: FilledButton(
-                        onPressed: () {
-                          print("google");
-                        },
-                        style: const ButtonStyle(
-                            backgroundColor: WidgetStatePropertyAll(
-                                Color.fromRGBO(52, 120, 240, 1))),
-                        child: const Text(
-                          "Google",
-                          style: TextStyle(
-                              color: Color.fromARGB(255, 255, 255, 255)),
-                        )),
-                  ),
-                ),
-              ],
-            ),
+            // const Padding(
+            //   padding: EdgeInsets.symmetric(vertical: 20),
+            //   child: Row(
+            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //     crossAxisAlignment: CrossAxisAlignment.center,
+            //     children: [
+            //       Expanded(
+            //         child: Divider(
+            //           color: Colors.grey,
+            //           thickness: 2,
+            //           indent: 10,
+            //           endIndent: 10,
+            //         ),
+            //       ),
+            //       Text(
+            //         "OR",
+            //         style: TextStyle(
+            //           color: Color.fromRGBO(0, 0, 0, 0.5),
+            //           fontSize: 12,
+            //           fontWeight: FontWeight.w700,
+            //         ),
+            //       ),
+            //       Expanded(
+            //         child: Divider(
+            //           color: Colors.grey,
+            //           thickness: 2,
+            //           indent: 10,
+            //           endIndent: 10,
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.center,
+            //   crossAxisAlignment: CrossAxisAlignment.center,
+            //   children: [
+            //     Padding(
+            //       padding: const EdgeInsets.symmetric(horizontal: 10),
+            //       child: SizedBox(
+            //         width: 140,
+            //         height: 35,
+            //         child: FilledButton(
+            //             onPressed: () {
+            //               print("facebook");
+            //             },
+            //             style: const ButtonStyle(
+            //                 backgroundColor: WidgetStatePropertyAll(
+            //                     Color.fromRGBO(61, 101, 124, 1))),
+            //             child: const Text(
+            //               "Facebook",
+            //               style: TextStyle(
+            //                   color: Color.fromARGB(255, 255, 255, 255)),
+            //             )),
+            //       ),
+            //     ),
+            //     Padding(
+            //       padding: const EdgeInsets.symmetric(horizontal: 10),
+            //       child: SizedBox(
+            //         width: 140,
+            //         height: 35,
+            //         child: FilledButton(
+            //             onPressed: () {
+            //               print("google");
+            //             },
+            //             style: const ButtonStyle(
+            //                 backgroundColor: WidgetStatePropertyAll(
+            //                     Color.fromRGBO(52, 120, 240, 1))),
+            //             child: const Text(
+            //               "Google",
+            //               style: TextStyle(
+            //                   color: Color.fromARGB(255, 255, 255, 255)),
+            //             )),
+            //       ),
+            //     ),
+            //   ],
+            // ),
             Padding(
               padding: const EdgeInsets.only(top: 60),
               child: Row(
