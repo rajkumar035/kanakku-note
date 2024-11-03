@@ -9,23 +9,44 @@ class ChartData {
   ChartData({required this.axis1, required this.axis2});
 }
 
-class Dashboard extends StatelessWidget {
-  const Dashboard({super.key});
+class _MyDashBoard extends State<Dashboard> {
+  var selectedDuration = "Weekly";
+  final List<ChartData> chartData = [
+    ChartData(axis1: 5, axis2: 9),
+    ChartData(axis1: 10, axis2: 2),
+    ChartData(axis1: 8, axis2: 1),
+    ChartData(axis1: 4, axis2: 9),
+    ChartData(axis1: 2, axis2: 4),
+    ChartData(axis1: 0, axis2: 0),
+    ChartData(axis1: 8, axis2: 1),
+    ChartData(axis1: 0, axis2: 0),
+    ChartData(axis1: 10, axis2: 2),
+    ChartData(axis1: 10, axis2: 2),
+    ChartData(axis1: 10, axis2: 2),
+  ];
+
+  final List<String> durationList = ["Weekly", "Monthly", "Yearly"];
+
+  String getBottomTitles(value) {
+    DateTime now = DateTime.now();
+
+    switch (selectedDuration) {
+      case "Weekly":
+        return DateFormat.MMMd()
+            .format(now.subtract(Duration(days: value.toInt())));
+      case "Monthly":
+        return DateFormat.MMMd()
+            .format(now.subtract(Duration(days: value.toInt() * 5)));
+      case "Yearly":
+        return DateFormat.MMMd()
+            .format(now.subtract(Duration(days: value.toInt() * 30)));
+      default:
+        return "";
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final List<ChartData> chartData = [
-      ChartData(axis1: 5, axis2: 9),
-      ChartData(axis1: 10, axis2: 2),
-      ChartData(axis1: 8, axis2: 1),
-      ChartData(axis1: 4, axis2: 9),
-      ChartData(axis1: 2, axis2: 4),
-      ChartData(axis1: 0, axis2: 0),
-      ChartData(axis1: 0, axis2: 0)
-    ];
-
-    final List<String> durationList = ["Weekly", "Monthly", "Yearly"];
-
     return Scaffold(
         body: Padding(
       padding: const EdgeInsets.only(left: 15, top: 65, right: 15, bottom: 0),
@@ -140,14 +161,14 @@ class Dashboard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const Row(
+                    Row(
                       children: [
-                        Text("Weekly",
-                            style: TextStyle(
+                        Text(selectedDuration,
+                            style: const TextStyle(
                                 color: Color.fromRGBO(0, 0, 0, 1),
                                 fontSize: 20,
                                 fontWeight: FontWeight.w600)),
-                        Padding(
+                        const Padding(
                           padding: EdgeInsets.only(left: 10),
                           child: Icon(
                             Icons.arrow_upward,
@@ -159,8 +180,11 @@ class Dashboard extends StatelessWidget {
                     ),
                     DropdownButton<String>(
                       onChanged: (value) {
-                        print('Selected value: $value');
+                        setState(() {
+                          selectedDuration = value as String;
+                        });
                       },
+                      value: selectedDuration,
                       hint: const Text("This week"),
                       items: durationList.map((String item) {
                         return DropdownMenuItem<String>(
@@ -272,14 +296,10 @@ class Dashboard extends StatelessWidget {
                                     showTitles: true,
                                     reservedSize: 42,
                                     getTitlesWidget: (value, meta) {
-                                      DateTime date =
-                                          DateTime(2024, 9, value.toInt() + 1);
-                                      String formattedDate =
-                                          DateFormat.MMMd().format(date);
                                       return Padding(
                                         padding: const EdgeInsets.only(top: 10),
                                         child: Text(
-                                          formattedDate,
+                                          getBottomTitles(value),
                                           style: const TextStyle(
                                               color: Color.fromRGBO(0, 0, 0, 1),
                                               fontSize: 10,
@@ -619,4 +639,11 @@ class Dashboard extends StatelessWidget {
       )),
     ));
   }
+}
+
+class Dashboard extends StatefulWidget {
+  const Dashboard({super.key});
+  @override
+  // ignore: library_private_types_in_public_api
+  _MyDashBoard createState() => _MyDashBoard();
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:kn_pos/starter/main.dart';
+import 'package:kn_pos/main/main.dart';
+// import 'package:kn_pos/starter/main.dart';
 
 void main() {
   runApp(const HomeApp());
@@ -11,6 +12,6 @@ class HomeApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        theme: ThemeData(fontFamily: "Poppins"), home: const MyStarter());
+        theme: ThemeData(fontFamily: "Poppins"), home: const MainPage());
   }
 }
